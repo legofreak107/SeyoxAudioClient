@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
+import java.util.concurrent.CompletableFuture;
 
 public class SeyoxAudioClient {
 
@@ -64,24 +65,26 @@ public class SeyoxAudioClient {
      * @param sessionKey the session key of the player can be anything. But a default uuid will work.
      * @return the url for the audio server encoded with data of the session
      */
-    public String handshakeWithAudioServer(String uuid, String sessionKey) {
-        try (Socket socket = new Socket(serverAddress, settings.getTcpPort())) {
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    public CompletableFuture<String> handshakeWithAudioServer(String uuid, String sessionKey) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Socket socket = new Socket(serverAddress, settings.getTcpPort())) {
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            String json = String.format("{\"playerId\": \"%s\", \"sessionKey\": \"%s\"}",
-                    uuid, sessionKey);
+                String json = String.format("{\"playerId\": \"%s\", \"sessionKey\": \"%s\"}",
+                        uuid, sessionKey);
 
-            out.println(json);
-            String response = in.readLine();
-            if (response.startsWith("OK;")) {
-                // Handshake successful
-                return "https://audio.seyox.nl/" + response.substring(3);
+                out.println(json);
+                String response = in.readLine();
+                if (response.startsWith("OK;")) {
+                    // Handshake successful
+                    return response.substring(3);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return "Handshake failed for player: " + uuid;
+            return "";
+        });
     }
 
     /**
