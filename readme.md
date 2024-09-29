@@ -21,7 +21,7 @@ Add the repository to your pom.xml
 <dependency>
     <groupId>com.github.legofreak107</groupId>
     <artifactId>SeyoxAudioClient</artifactId>
-    <version>9b3f2df22c</version>
+    <version>79c38b1bbf</version>
 </dependency>
 ```
 
@@ -60,6 +60,12 @@ public class Example {
 
         // Start the update loop
         startUpdatingPlayerPositions();
+    }
+
+    public static void registerPlayer(Player player) {
+        AudioModule.getInstance().handshakeWithAudioServer(player.getUniqueId().toString(), UUID.randomUuid().toString()).thenAccept(url -> {
+            player.sendMessage(MiniMessage.miniMessage().deserialize("<color:" + ApiSettings.getColor() + "><u><click:open_url:'" + url + "'>Click to connect to the audio server!</click></u></color>"));
+        });
     }
 
     public static void startUpdatingPlayerPositions() {
