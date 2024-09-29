@@ -19,9 +19,9 @@ Add the repository to your pom.xml
 
 ```xml
 <dependency>
-    <groupId>nl.seyox</groupId>
+    <groupId>com.github.legofreak107</groupId>
     <artifactId>SeyoxAudioClient</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>9b3f2df22c</version>
 </dependency>
 ```
 
