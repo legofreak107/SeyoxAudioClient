@@ -78,7 +78,7 @@ public class SeyoxAudioClient {
                 String response = in.readLine();
                 if (response.startsWith("OK;")) {
                     // Handshake successful
-                    return response.substring(3);
+                    return "https://audio.seyox.nl/" + response.substring(3);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
