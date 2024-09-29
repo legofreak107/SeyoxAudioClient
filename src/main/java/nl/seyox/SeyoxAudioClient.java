@@ -62,7 +62,7 @@ public class SeyoxAudioClient {
      *
      * @param uuid       the uuid of the player
      * @param sessionKey the session key of the player can be anything. But a default uuid will work.
-     * @return the response from the server
+     * @return the url for the audio server encoded with data of the session
      */
     public String handshakeWithAudioServer(String uuid, String sessionKey) {
         try (Socket socket = new Socket(serverAddress, settings.getTcpPort())) {
@@ -74,9 +74,9 @@ public class SeyoxAudioClient {
 
             out.println(json);
             String response = in.readLine();
-            if (response.equals("OK")) {
+            if (response.startsWith("OK;")) {
                 // Handshake successful
-                return "Handshake successful for player: " + uuid;
+                return "https://audio.seyox.nl/" + response.substring(3);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
